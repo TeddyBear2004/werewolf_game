@@ -15,6 +15,7 @@ public class requestedGame {
     public User admin;
     public Message message;
     private boolean confirmed = false;
+
     public requestedGame(Message message, User admin){
         this.admin      = admin;
         this.message    = message;
@@ -24,6 +25,12 @@ public class requestedGame {
     }
     public void addToPlayerList(User user){
         playerList.add(new Player(user));
+    }
+    public void removeFromPlayerList(User user){
+        playerList.remove(user);
+    }
+    public boolean isAdmin(User user){
+        return admin == user;
     }
     public void setConfirmed() {
         confirmed = true;
