@@ -1,0 +1,16 @@
+package team.speckfamily.teddy.werewolf.data;
+
+import net.dv8tion.jda.api.EmbedBuilder;
+
+import java.awt.*;
+
+public class Embed {
+    public static EmbedBuilder generate(){
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.YELLOW);
+        builder.setAuthor("Werewolf", "http://www.speckfamily.team");
+        builder.setTitle("Werewolf");
+        builder.setFooter("Game created by T3ddy#2064");
+        return builder;
+    }
+}
