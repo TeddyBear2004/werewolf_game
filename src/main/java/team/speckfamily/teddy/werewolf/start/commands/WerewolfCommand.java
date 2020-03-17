@@ -16,7 +16,7 @@ public class WerewolfCommand extends ListenerAdapter {
         if (args[0].equalsIgnoreCase("?werewolf")) {
             EmbedBuilder builder = Embed.generate();
             builder.setTitle("Start a new Werewolf Game!");
-            builder.addField("Join", "React with \uD83D\uDC3A to join the game!", false);
+            builder.addField("Join", "React with 🐺 to join the game!", false);
             builder.addField("Start", "React with ✅ to start the game!", false);
 
             event.getChannel().sendMessage(builder.build()).queue(message -> {
