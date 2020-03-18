@@ -2,7 +2,6 @@ package team.speckfamily.teddy.werewolf.start;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import team.speckfamily.teddy.werewolf.data.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
