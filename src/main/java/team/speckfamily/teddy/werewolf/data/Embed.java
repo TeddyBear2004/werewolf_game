@@ -13,4 +13,12 @@ public class Embed {
         builder.setFooter("Game created by T3ddy#2064");
         return builder;
     }
+    public static EmbedBuilder generate(String title){
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setColor(Color.YELLOW);
+        builder.setAuthor("Werewolf", "http://www.speckfamily.team");
+        builder.setTitle(title);
+        builder.setFooter("Game created by T3ddy#2064");
+        return builder;
+    }
 }
