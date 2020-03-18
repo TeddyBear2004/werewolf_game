@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class requestedGame {
     public static Map<Message, requestedGame> requestedGames = new HashMap<>();
-    public List<Player> playerList = new ArrayList<>();
+    public List<User> userList = new ArrayList<>();
     public User admin;
     public Message message;
     private boolean confirmed = false;
@@ -20,14 +20,14 @@ public class requestedGame {
         this.admin      = admin;
         this.message    = message;
     }
-    public List<Player> getPlayerList() {
-        return playerList;
+    public List<User> getPlayerList() {
+        return userList;
     }
     public void addToPlayerList(User user){
-        playerList.add(new Player(user));
+        userList.add(user);
     }
     public void removeFromPlayerList(User user){
-        playerList.remove(user);
+        userList.remove(user);
     }
     public boolean isAdmin(User user){
         return admin == user;

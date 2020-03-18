@@ -40,9 +40,7 @@ public class OnReactionAdd extends ListenerAdapter {
                         });
                     }
                     break;
-
             }
         });
-
     }
 }
