@@ -6,8 +6,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import team.speckfamily.teddy.werewolf.data.Embed;
 import team.speckfamily.teddy.werewolf.data.Player;
+import team.speckfamily.teddy.werewolf.main.Main;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class Vote extends ListenerAdapter {
     private final List<User> votingPlayers = new ArrayList<>();
@@ -17,7 +19,8 @@ public class Vote extends ListenerAdapter {
     private final Map<Player, Player> votes = new HashMap<>();
     private final String message;
     private final Map<Player, Integer> count = new HashMap<>();
-
+    private final CountDownLatch done = new CountDownLatch(1);
+    private Player deadPlayer = null;
     /**
      *
      * @param type the type who vote
@@ -26,6 +29,7 @@ public class Vote extends ListenerAdapter {
      *
      */
     public Vote(PlayerType type, List<Player> players, String msg){
+        Main.jda.addEventListener(this);
         this.type = type;
         this.players = players;
         this.message = msg;
@@ -48,6 +52,7 @@ public class Vote extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.isFromGuild())return;
+
         if(!players.contains(Player.of(event.getAuthor())))return;
 
         List<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
@@ -64,14 +69,29 @@ public class Vote extends ListenerAdapter {
 
         count.forEach((player, integer) -> {
             double percent = ((double)integer / votingPlayers.size());
-            if(percent > 50){
-                //todo Spieler scheidet aus
+            if(percent > 0.5){
+                deadPlayer = player;
+                done.countDown();
             }
         });
     }
 
+    /**
+     * @return the player who died
+     */
+    public Player getDeadPlayer(){
+        try {
+            done.await(2, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Main.jda.removeEventListener(this);
+        return this.deadPlayer;
+    }
+
     private void refreshCount(){
-        votes.forEach((voter, player2) -> count.put(player2, count.getOrDefault(player2, 0)+1));
+        votes.forEach((voter, player2) -> count.put(player2, (count.getOrDefault(player2, 0)+1)));
     }
 
     private Map<Integer, Player> associatePlayerToNumber(Player player){
@@ -84,13 +104,14 @@ public class Vote extends ListenerAdapter {
         });
         return playerIntegerMap;
     }
-
     private String associatePlayerToNumberToString(Player player){
+        refreshCount();
         StringBuilder msg = new StringBuilder();
         associatePlayerToNumber(player).forEach((integer, player1) -> msg.append(integer).append(" : ").append(player1.getUser().getName()).append(" [votes] ").append(count.getOrDefault(player1, 0)).append("\n"));
         msg.append(0).append(" : ").append(player.getUser().getName()).append(" [votes] ").append(count.getOrDefault(player, 0));
         return msg.toString();
     }
+
     private boolean isInt(String s){
         try {
             Integer.parseInt(s);
