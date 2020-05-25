@@ -11,6 +11,7 @@ import java.util.*;
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
+    private final List<Player> originalPlayers;
 
     public Game(List<User> users){
         int sehAnzahl = 1;
@@ -31,22 +32,47 @@ public class Game {
             }
             users.remove(p);
         }
+
+        this.originalPlayers = this.players;
+
         this.players.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel -> {
             EmbedBuilder embedBuilder = Embed.generate();
             embedBuilder.addField("Your role", String.format("You are a %s", player.getType()), false);
             privateChannel.sendMessage(embedBuilder.build()).queue();
         }));
-        while (isRunning()){
-            //TODO Insert Game Process here
+        Vote vote;
+
+        while (getWinnerFraction() == null) {
+            vote = new Vote(PlayerType.WERWOLF, players, "Bitte wähle aus, wer nun sterben soll.");
+            final Player lastDeadPlayer = vote.getVotedPlayer();
+
+            if (lastDeadPlayer != null) {
+                players.remove(lastDeadPlayer);
+                lastDeadPlayer.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(Embed.generate("Du bist ausgeschieden.").build()).queue());
+                players.forEach(player -> player.getUser()
+                        .openPrivateChannel().queue(privateChannel ->
+                                privateChannel.sendMessage(Embed.generate(
+                                        lastDeadPlayer.getUser().getName() + " ist ausgeschieden.").build()).queue()));
+
+            }else {}//todo pick random
         }
+
+        PlayerType winnerFraction = getWinnerFraction();
+        originalPlayers.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel ->
+                privateChannel.sendMessage(Embed.generate(
+                        "Winner!", "The " + winnerFraction + " won this game.").build()).queue()));
     }
-    boolean isRunning(){
+
+
+    PlayerType getWinnerFraction(){
         int werAnzahl = 0;
         for(Player player : players)
             if (player.getType() == PlayerType.WERWOLF)
                 werAnzahl++;
-
-        return !(werAnzahl == 0 && werAnzahl != players.size());
+        if(werAnzahl == 0)
+            return PlayerType.DORFBEWOHNER;
+        else if(werAnzahl == players.size())
+            return PlayerType.WERWOLF;
+        return null;
     }
-
 }
