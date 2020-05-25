@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.start.requestedGame;
+import team.speckfamily.teddy.werewolf.start.RequestedGame;
 
 import java.util.Objects;
 
@@ -22,8 +22,8 @@ public class WerewolfCommand extends ListenerAdapter {
             event.getChannel().sendMessage(builder.build()).queue(message -> {
                 message.addReaction("U+1F43A").queue();
                 message.addReaction("U+2705").queue();
-                requestedGame game = new requestedGame(message, Objects.requireNonNull(event.getMember()).getUser());
-                requestedGame.requestedGames.put(message, game);
+                RequestedGame game = new RequestedGame(message, Objects.requireNonNull(event.getMember()).getUser());
+                RequestedGame.requestedGames.put(message, game);
             });
         }
     }

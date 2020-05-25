@@ -8,14 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class requestedGame {
-    public static Map<Message, requestedGame> requestedGames = new HashMap<>();
+public class RequestedGame {
+    public static Map<Message, RequestedGame> requestedGames = new HashMap<>();
     public List<User> userList = new ArrayList<>();
     public User admin;
     public Message message;
     private boolean confirmed = false;
 
-    public requestedGame(Message message, User admin){
+    public RequestedGame(Message message, User admin){
         this.admin      = admin;
         this.message    = message;
     }
