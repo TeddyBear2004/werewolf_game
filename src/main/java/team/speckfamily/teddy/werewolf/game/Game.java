@@ -42,14 +42,11 @@ public class Game {
     }
     boolean isRunning(){
         int werAnzahl = 0;
-        for(Player player : players){
-            if (player.getType() == PlayerType.WERWOLF) {
+        for(Player player : players)
+            if (player.getType() == PlayerType.WERWOLF)
                 werAnzahl++;
-            }
-        }
-        if(werAnzahl == 0){
-            return false;
-        }else return werAnzahl != players.size();
+
+        return !(werAnzahl == 0 && werAnzahl != players.size());
     }
 
 }
