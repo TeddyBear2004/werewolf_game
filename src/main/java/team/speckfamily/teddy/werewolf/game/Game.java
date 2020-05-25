@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
-    private List<Player> players = new ArrayList<>();
+    private final List<Player> players = new ArrayList<>();
 
     public Game(List<User> users){
         int sehAnzahl = 1;
