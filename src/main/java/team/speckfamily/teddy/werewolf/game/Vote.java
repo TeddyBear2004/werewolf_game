@@ -79,7 +79,7 @@ public class Vote extends ListenerAdapter {
     /**
      * @return the player who died
      */
-    public Player getDeadPlayer(){
+    public Player getVotedPlayer(){
         try {
             done.await(2, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
