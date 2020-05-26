@@ -62,7 +62,6 @@ public class Game {
                         "Winner!", "The " + winnerFraction + " team won this game.").build()).queue()));
     }
 
-
     FractionName getWinnerFraction(){
         int werAnzahl = 0;
         for(PlayerObject player : players)
@@ -77,5 +76,9 @@ public class Game {
         else if(werAnzahl == players.size())
             return new Werewolf(null).getName();
         return null;
+    }
+
+    public List<PlayerObject> getPlayers() {
+        return players;
     }
 }
