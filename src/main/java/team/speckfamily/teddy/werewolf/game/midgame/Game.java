@@ -4,11 +4,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.game.players.Oracle;
+import team.speckfamily.teddy.werewolf.game.players.*;
 import team.speckfamily.teddy.werewolf.game.Vote;
-import team.speckfamily.teddy.werewolf.game.players.PlayerObject;
-import team.speckfamily.teddy.werewolf.game.players.Villiger;
-import team.speckfamily.teddy.werewolf.game.players.Werewolf;
 
 import java.util.*;
 
@@ -59,22 +56,26 @@ public class Game {
             }else {}//todo pick random
         }
 
-        String winnerFraction = getWinnerFraction();
+        FractionName winnerFraction = getWinnerFraction();
         this.players.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel ->
                 privateChannel.sendMessage(Embed.generate(
-                        "Winner!", "The " + winnerFraction + " won this game.").build()).queue()));
+                        "Winner!", "The " + winnerFraction + " team won this game.").build()).queue()));
     }
 
 
-    String getWinnerFraction(){
+    FractionName getWinnerFraction(){
         int werAnzahl = 0;
         for(PlayerObject player : players)
             if (player.getClass() == Werewolf.class)
                 werAnzahl++;
+        System.out.println(werAnzahl == 0);
+        System.out.println(werAnzahl == players.size());
+        System.out.println(Werewolf.of(null).getName());
+
         if(werAnzahl == 0)
-            return Villiger.of(null).getName();
+            return new Villiger(null).getName();
         else if(werAnzahl == players.size())
-            return Werewolf.of(null).getName();
+            return new Werewolf(null).getName();
         return null;
     }
 }

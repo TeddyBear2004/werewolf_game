@@ -32,7 +32,7 @@ public class Werewolf extends PlayerObject{
     }
 
     @Override
-    public String getName() {
-        return "Werewolf";
+    public FractionName getName() {
+        return FractionName.Werewolf;
     }
 }

@@ -17,7 +17,6 @@ public abstract class PlayerObject {
     public abstract Action onAction(Game game);
     public abstract Action onDie(Game game);
     public abstract Action onFirstCall(Game game);
-    public abstract String getName();
 
     public User getUser() {
         return user;
@@ -38,12 +37,11 @@ public abstract class PlayerObject {
             public Action onFirstCall(Game game) {
                 return null;
             }
-
-            @Override
-            public String getName() {
-                return null;
-            }
         };
+    }
+
+    public FractionName getName(){
+        return FractionName.NotSet;
     }
 
     @Override

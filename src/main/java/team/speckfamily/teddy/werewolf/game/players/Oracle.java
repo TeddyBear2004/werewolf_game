@@ -25,7 +25,7 @@ public class Oracle extends PlayerObject{
     }
 
     @Override
-    public String getName() {
-        return "Oracle";
+    public FractionName getName() {
+        return FractionName.Oracle;
     }
 }

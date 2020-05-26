@@ -25,7 +25,7 @@ public class Villiger extends PlayerObject {
     }
 
     @Override
-    public String getName() {
-        return "Villiger";
+    public FractionName getName() {
+        return FractionName.Villiger;
     }
 }
