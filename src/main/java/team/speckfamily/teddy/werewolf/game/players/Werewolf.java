@@ -12,9 +12,6 @@ public class Werewolf extends PlayerObject{
     public Werewolf(User user) {
         super(user);
     }
-    public Werewolf() {
-        super(null);
-    }
 
     @Override
     public Action onAction(Game game) {
