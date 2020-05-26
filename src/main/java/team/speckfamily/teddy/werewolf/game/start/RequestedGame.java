@@ -1,4 +1,4 @@
-package team.speckfamily.teddy.werewolf.start;
+package team.speckfamily.teddy.werewolf.game.start;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;

@@ -1,17 +1,20 @@
-package team.speckfamily.teddy.werewolf.game;
+package team.speckfamily.teddy.werewolf.game.midgame;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.data.Player;
+import team.speckfamily.teddy.werewolf.game.players.Oracle;
+import team.speckfamily.teddy.werewolf.game.Vote;
+import team.speckfamily.teddy.werewolf.game.players.PlayerObject;
+import team.speckfamily.teddy.werewolf.game.players.Villiger;
+import team.speckfamily.teddy.werewolf.game.players.Werewolf;
 
 import java.util.*;
 
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
-    private final List<Player> players = new ArrayList<>();
-    private final List<Player> originalPlayers;
+    private final List<PlayerObject> players = new ArrayList<>();
 
     public Game(List<User> users){
         int sehAnzahl = 1;
@@ -22,29 +25,28 @@ public class Game {
         while (users.size() > 0){
             User p = users.get((int)(Math.random()*users.size()));
             if(sehAnzahl > 0){
-                this.players.add(new Player(p, PlayerType.SEHER));
+                this.players.add(new Oracle(p));
                 sehAnzahl--;
             }else if(wereAnzahl > 0){
-                this.players.add(new Player(p, PlayerType.WERWOLF));
+                this.players.add(new Werewolf(p));
                 wereAnzahl--;
-            }else {
-                this.players.add(new Player(p, PlayerType.DORFBEWOHNER));
-            }
+            }else
+                this.players.add(new Villiger(p));
+
             users.remove(p);
         }
 
-        this.originalPlayers = this.players;
-
         this.players.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel -> {
             EmbedBuilder embedBuilder = Embed.generate();
-            embedBuilder.addField("Your role", String.format("You are a %s", player.getType()), false);
+            embedBuilder.addField("Your role", String.format("You are a %s", player.getName()), false);
             privateChannel.sendMessage(embedBuilder.build()).queue();
         }));
         Vote vote;
 
         while (getWinnerFraction() == null) {
-            vote = new Vote(PlayerType.WERWOLF, players, "Bitte wähle aus, wer nun sterben soll.");
-            final Player lastDeadPlayer = vote.getVotedPlayer();
+
+            vote = new Vote(Werewolf.class, players, "Bitte wähle aus, wer nun sterben soll.");
+            final PlayerObject lastDeadPlayer = vote.getVotedPlayer();
 
             if (lastDeadPlayer != null) {
                 players.remove(lastDeadPlayer);
@@ -57,22 +59,22 @@ public class Game {
             }else {}//todo pick random
         }
 
-        PlayerType winnerFraction = getWinnerFraction();
-        originalPlayers.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel ->
+        String winnerFraction = getWinnerFraction();
+        this.players.forEach(player -> player.getUser().openPrivateChannel().queue(privateChannel ->
                 privateChannel.sendMessage(Embed.generate(
                         "Winner!", "The " + winnerFraction + " won this game.").build()).queue()));
     }
 
 
-    PlayerType getWinnerFraction(){
+    String getWinnerFraction(){
         int werAnzahl = 0;
-        for(Player player : players)
-            if (player.getType() == PlayerType.WERWOLF)
+        for(PlayerObject player : players)
+            if (player.getClass() == Werewolf.class)
                 werAnzahl++;
         if(werAnzahl == 0)
-            return PlayerType.DORFBEWOHNER;
+            return Villiger.of(null).getName();
         else if(werAnzahl == players.size())
-            return PlayerType.WERWOLF;
+            return Werewolf.of(null).getName();
         return null;
     }
 }

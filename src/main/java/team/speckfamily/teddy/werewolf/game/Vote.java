@@ -5,22 +5,25 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.data.Player;
-import team.speckfamily.teddy.werewolf.main.Main;
+import team.speckfamily.teddy.werewolf.Main;
+import team.speckfamily.teddy.werewolf.game.players.PlayerObject;
+import team.speckfamily.teddy.werewolf.game.players.Villiger;
+import team.speckfamily.teddy.werewolf.game.players.Werewolf;
 
 import java.util.*;
 import java.util.concurrent.*;
 
 public class Vote extends ListenerAdapter {
     private final List<User> votingPlayers = new ArrayList<>();
-    private final List<Player> players;
-    private final PlayerType type;
-    private final Map<Player, Message> voteMessages = new HashMap<>();
-    private final Map<Player, Player> votes = new HashMap<>();
-    private final String message;
-    private final Map<Player, Integer> count = new HashMap<>();
+    private final List<PlayerObject> players;
+    private final Class<? extends PlayerObject> type;
+    private final Map<PlayerObject, Message> voteMessages = new HashMap<>();
+    private final Map<PlayerObject, PlayerObject> votes = new HashMap<>();
+    private final Map<PlayerObject, Integer> count = new HashMap<>();
     private final CountDownLatch done = new CountDownLatch(1);
-    private Player deadPlayer = null;
+    private PlayerObject deadPlayer = null;
+
+
     /**
      *
      * @param type the type who vote
@@ -28,15 +31,14 @@ public class Vote extends ListenerAdapter {
      * @param msg the message which send to all players
      *
      */
-    public Vote(PlayerType type, List<Player> players, String msg){
+    public Vote(Class<? extends PlayerObject> type, List<PlayerObject> players, String msg){
         Main.jda.addEventListener(this);
         this.type = type;
         this.players = players;
-        this.message = msg;
         this.refreshCount();
 
         players.forEach(player -> {
-            if(type == player.getType()) {
+            if(type == player.getClass()) {
                 this.votingPlayers.add(player.getUser());
                 player.getUser().openPrivateChannel()
                         .queue(privateChannel ->
@@ -45,15 +47,15 @@ public class Vote extends ListenerAdapter {
         });
         this.votingPlayers.forEach(user ->
                 user.openPrivateChannel().queue(privateChannel -> privateChannel
-                        .sendMessage(associatePlayerToNumberToString(Player.of(user)))
-                        .queue(message1 -> voteMessages.put(Player.of(user), message1))));
+                        .sendMessage(associatePlayerToNumberToString(PlayerObject.of(user)))
+                        .queue(message1 -> voteMessages.put(PlayerObject.of(user), message1))));
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if(event.isFromGuild())return;
 
-        if(!players.contains(Player.of(event.getAuthor())))return;
+        if(!players.contains(PlayerObject.of(event.getAuthor())))return;
 
         List<String> args = new LinkedList<>(Arrays.asList(event.getMessage().getContentRaw().split(" ")));
         args.removeIf(s -> s == null || s.equals(""));
@@ -63,7 +65,7 @@ public class Vote extends ListenerAdapter {
             return;
         }
 
-        votes.put(Player.of(event.getAuthor()), associatePlayerToNumber(Player.of(event.getAuthor())).get(Integer.parseInt(args.get(0))));
+        votes.put(PlayerObject.of(event.getAuthor()), associatePlayerToNumber(PlayerObject.of(event.getAuthor())).get(Integer.parseInt(args.get(0))));
 
         this.voteMessages.forEach((player, message1) -> message1.editMessage(associatePlayerToNumberToString(player)).queue());
 
@@ -79,7 +81,7 @@ public class Vote extends ListenerAdapter {
     /**
      * @return the player who died
      */
-    public Player getVotedPlayer(){
+    public PlayerObject getVotedPlayer(){
         try {
             done.await(2, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
@@ -94,17 +96,17 @@ public class Vote extends ListenerAdapter {
         votes.forEach((voter, player2) -> count.put(player2, (count.getOrDefault(player2, 0)+1)));
     }
 
-    private Map<Integer, Player> associatePlayerToNumber(Player player){
-        Map<Integer, Player> playerIntegerMap = new HashMap<>();
+    private Map<Integer, PlayerObject> associatePlayerToNumber(PlayerObject player){
+        Map<Integer, PlayerObject> playerIntegerMap = new HashMap<>();
 
         players.forEach(player1 -> {
             if(player.equals(player1))return;
-            if(this.type == PlayerType.DORFBEWOHNER || player.getType() != player1.getType())
+            if(this.type == Villiger.class || player.getClass() != player1.getClass())
                 playerIntegerMap.put(playerIntegerMap.size()+1, player1);
         });
         return playerIntegerMap;
     }
-    private String associatePlayerToNumberToString(Player player){
+    private String associatePlayerToNumberToString(PlayerObject player){
         refreshCount();
         StringBuilder msg = new StringBuilder();
         associatePlayerToNumber(player).forEach((integer, player1) -> msg.append(integer).append(" : ").append(player1.getUser().getName()).append(" [votes] ").append(count.getOrDefault(player1, 0)).append("\n"));

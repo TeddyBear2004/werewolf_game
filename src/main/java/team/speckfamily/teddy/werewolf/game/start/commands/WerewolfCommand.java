@@ -1,10 +1,10 @@
-package team.speckfamily.teddy.werewolf.start.commands;
+package team.speckfamily.teddy.werewolf.game.start.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.start.RequestedGame;
+import team.speckfamily.teddy.werewolf.game.start.RequestedGame;
 
 import java.util.Objects;
 
