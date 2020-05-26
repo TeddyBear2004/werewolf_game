@@ -8,7 +8,6 @@ import team.speckfamily.teddy.werewolf.data.Embed;
 import team.speckfamily.teddy.werewolf.Main;
 import team.speckfamily.teddy.werewolf.game.players.PlayerObject;
 import team.speckfamily.teddy.werewolf.game.players.Villiger;
-import team.speckfamily.teddy.werewolf.game.players.Werewolf;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -110,7 +109,6 @@ public class Vote extends ListenerAdapter {
         refreshCount();
         StringBuilder msg = new StringBuilder();
         associatePlayerToNumber(player).forEach((integer, player1) -> msg.append(integer).append(" : ").append(player1.getUser().getName()).append(" [votes] ").append(count.getOrDefault(player1, 0)).append("\n"));
-        msg.append(0).append(" : ").append(player.getUser().getName()).append(" [votes] ").append(count.getOrDefault(player, 0));
         return msg.toString();
     }
 
