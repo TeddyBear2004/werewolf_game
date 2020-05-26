@@ -50,7 +50,7 @@ public abstract class PlayerObject {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PlayerObject)) return false;
-        return Objects.equals(user.getIdLong(), ((PlayerObject) o).getUser().getIdLong());
+        return Objects.equals(user, ((PlayerObject) o).getUser());
     }
 
     @Override
