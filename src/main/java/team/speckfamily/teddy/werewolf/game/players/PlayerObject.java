@@ -2,8 +2,10 @@ package team.speckfamily.teddy.werewolf.game.players;
 
 import net.dv8tion.jda.api.entities.User;
 import team.speckfamily.teddy.werewolf.game.midgame.Action;
+import team.speckfamily.teddy.werewolf.game.midgame.Action;
 import team.speckfamily.teddy.werewolf.game.midgame.Game;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class PlayerObject {
@@ -14,9 +16,9 @@ public abstract class PlayerObject {
 
     }
 
-    public abstract Action onAction(Game game);
-    public abstract Action onDie(Game game);
-    public abstract Action onFirstCall(Game game);
+    public abstract List<Action> onAction(Game game);
+    public abstract List<Action> onDie(Game game);
+    public abstract List<Action> onFirstCall(Game game);
 
     public User getUser() {
         return user;
@@ -24,17 +26,17 @@ public abstract class PlayerObject {
     public static PlayerObject of(User user){
         return new PlayerObject(user) {
             @Override
-            public Action onAction(Game game) {
+            public List<Action> onAction(Game game) {
                 return null;
             }
 
             @Override
-            public Action onDie(Game game) {
+            public List<Action> onDie(Game game) {
                 return null;
             }
 
             @Override
-            public Action onFirstCall(Game game) {
+            public List<Action> onFirstCall(Game game) {
                 return null;
             }
         };
