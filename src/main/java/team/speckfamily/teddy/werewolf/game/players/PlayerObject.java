@@ -49,9 +49,8 @@ public abstract class PlayerObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PlayerObject that = (PlayerObject) o;
-        return Objects.equals(user, that.getUser());
+        if (!(o instanceof PlayerObject)) return false;
+        return Objects.equals(user.getIdLong(), ((PlayerObject) o).getUser().getIdLong());
     }
 
     @Override
