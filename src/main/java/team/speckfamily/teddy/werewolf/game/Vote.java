@@ -4,13 +4,14 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import team.speckfamily.teddy.werewolf.data.Embed;
 import team.speckfamily.teddy.werewolf.Main;
+import team.speckfamily.teddy.werewolf.data.Embed;
 import team.speckfamily.teddy.werewolf.game.players.Player;
 import team.speckfamily.teddy.werewolf.game.players.Villiger;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class Vote extends ListenerAdapter {
     private final List<User> votingPlayers = new ArrayList<>();

@@ -11,7 +11,10 @@ import team.speckfamily.teddy.werewolf.game.players.logic.OracleLogic;
 import team.speckfamily.teddy.werewolf.game.players.logic.VilligerLogic;
 import team.speckfamily.teddy.werewolf.game.players.logic.WerewolfLogic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
