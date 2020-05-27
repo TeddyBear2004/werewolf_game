@@ -14,7 +14,7 @@ public class WerewolfLogic extends LogicObject {
     @Override
     public List<Action> onAction(Game game) {
         List<Action> actions = new ArrayList<>();
-        Vote vote = new Vote(Werewolf.class, game.getPlayers(), "Bitte wähle aus, wer nun sterben soll.", true);
+        Vote vote = new Vote(Werewolf.class, game.getPlayers(), "Bitte wähle aus, wer nun sterben soll.", true, 2, false);
         Player player = vote.getVotedPlayer();
         if(player == null)
             player = game.getRandomPlayer();

@@ -22,20 +22,23 @@ public class Vote extends ListenerAdapter {
     private final Map<Player, Integer> count = new HashMap<>();
     private final CountDownLatch done = new CountDownLatch(1);
     private final boolean canSeeTeamMates;
+    private final boolean canVoteSelf;
     private Player deadPlayer = null;
     private final int timeout;
 
 
     /**
-     *
-     * @param type the type who vote
+     *  @param type the type who vote
      * @param players all players
      * @param msg the message which send to all players
+     * @param timeout the time after this vote stops
+     * @param canVoteSelf if the player can vote for his self
      *
      *
      */
-    public Vote(Class<? extends Player> type, List<Player> players, String msg, boolean canSeeTeamMates, int timeout){
+    public Vote(Class<? extends Player> type, List<Player> players, String msg, boolean canSeeTeamMates, int timeout, boolean canVoteSelf){
         this.canSeeTeamMates = canSeeTeamMates;
+        this.canVoteSelf = canVoteSelf;
         Main.jda.addEventListener(this);
         this.type = type;
         this.players = players;
@@ -104,9 +107,9 @@ public class Vote extends ListenerAdapter {
         Map<Integer, Player> playerIntegerMap = new HashMap<>();
 
         players.forEach(player1 -> {
-            if(player.equals(player1))return;
-            if(this.type == Villiger.class || player.getClass() != player1.getClass())
-                playerIntegerMap.put(playerIntegerMap.size()+1, player1);
+            if(!player.equals(player1) || canVoteSelf)
+                if(this.type == Villiger.class || player.getClass() != player1.getClass())
+                    playerIntegerMap.put(playerIntegerMap.size()+1, player1);
         });
         return playerIntegerMap;
     }

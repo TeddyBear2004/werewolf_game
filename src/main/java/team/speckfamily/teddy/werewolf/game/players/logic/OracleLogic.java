@@ -15,7 +15,7 @@ public class OracleLogic extends LogicObject {
         List<Player> oracles = game.getPlayersFromFraction(Oracle.class);
         if(oracles.size() == 0)return null;
 
-        Vote vote = new Vote(Oracle.class, game.getPlayers(), "Wessen Rolle möchtest du erfahren?", false);
+        Vote vote = new Vote(Oracle.class, game.getPlayers(), "Wessen Rolle möchtest du erfahren?", false, 2, false);
         Player player = vote.getVotedPlayer();
         Player oracle = oracles.get(0);
         if(player != null)

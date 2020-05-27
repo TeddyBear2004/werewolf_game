@@ -6,10 +6,7 @@ import net.dv8tion.jda.api.entities.User;
 import team.speckfamily.teddy.werewolf.data.Embed;
 import team.speckfamily.teddy.werewolf.game.Vote;
 import team.speckfamily.teddy.werewolf.game.players.*;
-import team.speckfamily.teddy.werewolf.game.players.logic.LogicObject;
-import team.speckfamily.teddy.werewolf.game.players.logic.OracleLogic;
-import team.speckfamily.teddy.werewolf.game.players.logic.VilligerLogic;
-import team.speckfamily.teddy.werewolf.game.players.logic.WerewolfLogic;
+import team.speckfamily.teddy.werewolf.game.players.logic.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +24,7 @@ public class Game {
 
     public Game(List<User> users){
         int sehAnzahl = 1;
+        int witchAnzahl = 1;
         int wereAnzahl = users.size()/6;
         if(wereAnzahl == 0)
             wereAnzahl = 1;
@@ -39,6 +37,9 @@ public class Game {
             }else if(wereAnzahl > 0){
                 this.players.add(new Werewolf(p));
                 wereAnzahl--;
+            }else if(witchAnzahl > 0){
+                this.players.add(new Witch(p));
+                witchAnzahl--;
             }else
                 this.players.add(new Villiger(p));
 
@@ -55,6 +56,8 @@ public class Game {
         fractionList.add(new WerewolfLogic());
         fractionList.add(new OracleLogic());
 
+        fractionList.add(new WitchLogic());
+
         fractionList.add(new VilligerLogic());          //Villiger are always the last one
 
 
@@ -67,7 +70,7 @@ public class Game {
             for (LogicObject logicObject : fractionList)
                 convertAction(logicObject.onAction(this));
 
-            broadcast("The following players were killed that night: \n" + getDiedPlayers());
+            broadcast("The following players were killed that night: \n" + getDiedPlayersString());
 
             if(getWinnerFraction() != null)
                 break;
@@ -146,18 +149,22 @@ public class Game {
     }
 
     private Player voteMayor() {
-        Vote vote = new Vote(Player.class, getPlayers(), "Who should be the mayor?", false, 2);
+        Vote vote = new Vote(Player.class, getPlayers(), "Who should be the mayor?", false, 2, true);
         return vote.getVotedPlayer();
     }
     private Player voteHangMan(){
-        Vote vote = new Vote(Player.class, getPlayers(), "Who is a werewolf and should be hanged?", false, 2);
+        Vote vote = new Vote(Player.class, getPlayers(), "Who is a werewolf and should be hanged?", false, 2, false);
         Player p = vote.getVotedPlayer();
         broadcast("The player " + p.getUser().getName() + " was killed", Werewolf.class);
         return p;
 
     }
 
-    private String getDiedPlayers(){
+    public List<Player> getDiedPlayers() {
+        return diedPlayers;
+    }
+
+    private String getDiedPlayersString(){
         StringBuilder builder = new StringBuilder();
         diedPlayers.forEach(players::remove);
         diedPlayers.forEach(player -> builder.append(player.getUser().getName()).append(", "));
