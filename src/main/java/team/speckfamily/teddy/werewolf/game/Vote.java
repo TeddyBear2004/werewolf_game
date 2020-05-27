@@ -23,6 +23,7 @@ public class Vote extends ListenerAdapter {
     private final CountDownLatch done = new CountDownLatch(1);
     private final boolean canSeeTeamMates;
     private Player deadPlayer = null;
+    private final int timeout;
 
 
     /**
@@ -33,12 +34,13 @@ public class Vote extends ListenerAdapter {
      *
      *
      */
-    public Vote(Class<? extends Player> type, List<Player> players, String msg, boolean canSeeTeamMates){
+    public Vote(Class<? extends Player> type, List<Player> players, String msg, boolean canSeeTeamMates, int timeout){
         this.canSeeTeamMates = canSeeTeamMates;
         Main.jda.addEventListener(this);
         this.type = type;
         this.players = players;
         this.refreshCount();
+        this.timeout = timeout;
 
         players.forEach(player -> {
             if(type == player.getClass()) {
@@ -86,7 +88,7 @@ public class Vote extends ListenerAdapter {
      */
     public Player getVotedPlayer(){
         try {
-            done.await(2, TimeUnit.MINUTES);
+            done.await(this.timeout, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

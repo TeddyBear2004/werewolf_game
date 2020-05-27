@@ -19,6 +19,9 @@ import java.util.Map;
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
+    public boolean witchCanHeal = true;
+    public boolean witchCanKill = true;
+
     private Player mayor;
     private List<Player> diedPlayers = new ArrayList<>();
 
@@ -142,12 +145,12 @@ public class Game {
         });
     }
 
-    private Player voteMayor(){
-        Vote vote = new Vote(Player.class, getPlayers(), "Who should be the mayor?", false);
+    private Player voteMayor() {
+        Vote vote = new Vote(Player.class, getPlayers(), "Who should be the mayor?", false, 2);
         return vote.getVotedPlayer();
     }
     private Player voteHangMan(){
-        Vote vote = new Vote(Player.class, getPlayers(), "Who is a werewolf and should be hanged?", false);
+        Vote vote = new Vote(Player.class, getPlayers(), "Who is a werewolf and should be hanged?", false, 2);
         Player p = vote.getVotedPlayer();
         broadcast("The player " + p.getUser().getName() + " was killed", Werewolf.class);
         return p;
