@@ -128,7 +128,6 @@ public class Game {
 
             switch (action.getType()){
                 case kill:
-                    players.remove(action.getPlayer());
                     diedPlayers.add(action.getPlayer());
                     break;
                 case love:
@@ -154,9 +153,9 @@ public class Game {
 
     private String getDiedPlayers(){
         StringBuilder builder = new StringBuilder();
-
+        diedPlayers.forEach(players::remove);
         diedPlayers.forEach(player -> builder.append(player.getUser().getName()).append(", "));
-        if(builder.length() == 0)return "nobody";
+        if(builder.length() >= 2)return "nobody";
 
         builder.replace(builder.length()-2, builder.length(), "");
         diedPlayers = new ArrayList<>();
