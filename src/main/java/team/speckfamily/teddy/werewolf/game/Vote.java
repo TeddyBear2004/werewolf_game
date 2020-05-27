@@ -43,7 +43,7 @@ public class Vote extends ListenerAdapter {
         this.timeout = timeout;
 
         players.forEach(player -> {
-            if(type == player.getClass()) {
+            if(isFromFraction(player, type)) {
                 this.votingPlayers.add(player.getUser());
                 player.getUser().openPrivateChannel()
                         .queue(privateChannel ->
@@ -126,6 +126,15 @@ public class Vote extends ListenerAdapter {
             Integer.parseInt(s);
             return true;
         }catch (NumberFormatException e){
+            return false;
+        }
+    }
+
+    static boolean isFromFraction(Player p, Class<? extends Player> type){
+        try {
+            type.cast(p);
+            return true;
+        }catch (ClassCastException e){
             return false;
         }
     }
