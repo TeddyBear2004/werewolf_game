@@ -6,14 +6,9 @@ import team.speckfamily.teddy.werewolf.game.midgame.Game;
 
 import java.util.List;
 
-public class Oracle extends PlayerObject{
-    public Oracle(User user) {
-        super(user);
-    }
-
-    @Override
-    public List<Action> onAction(Game game) {
-        return null;
+public class Oracle extends Player {
+    public Oracle(User user){
+        super(user, FractionName.Oracle);
     }
 
     @Override
@@ -21,13 +16,4 @@ public class Oracle extends PlayerObject{
         return null;
     }
 
-    @Override
-    public List<Action> onFirstCall(Game game) {
-        return null;
-    }
-
-    @Override
-    public FractionName getName() {
-        return FractionName.Oracle;
-    }
 }

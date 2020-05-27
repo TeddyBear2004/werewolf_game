@@ -25,7 +25,7 @@ public class OnReactionRemove extends ListenerAdapter {
                     case "✅":
                         if(RequestedGame.requestedGames.get(message).isAdmin(event.getUser())){
                             if(!RequestedGame.requestedGames.get(message).isConfirmed())return;
-                            if(RequestedGame.requestedGames.get(message).getPlayerList().size() < 3){
+                            if(RequestedGame.requestedGames.get(message).getPlayerList().size() < 2){
                                 builder = Embed.generate();
                                 builder.addField("Not enough players!", "You may not start than less than 3 people.", false);
                                 event.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(builder.build()).queue());

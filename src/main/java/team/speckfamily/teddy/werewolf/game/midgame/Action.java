@@ -1,13 +1,13 @@
 package team.speckfamily.teddy.werewolf.game.midgame;
 
 
-import team.speckfamily.teddy.werewolf.game.players.PlayerObject;
+import team.speckfamily.teddy.werewolf.game.players.Player;
 
 public class Action {
     private final ActionType type;
-    private final PlayerObject playerObject;
-    public Action(ActionType type, PlayerObject playerObject){
-        this.playerObject = playerObject;
+    private final Player player;
+    public Action(ActionType type, Player player){
+        this.player = player;
         this.type = type;
     }
 
@@ -15,7 +15,7 @@ public class Action {
         return type;
     }
 
-    public PlayerObject getPlayerObject() {
-        return playerObject;
+    public Player getPlayer() {
+        return player;
     }
 }

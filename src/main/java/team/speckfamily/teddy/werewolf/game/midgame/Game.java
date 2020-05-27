@@ -4,14 +4,20 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import team.speckfamily.teddy.werewolf.data.Embed;
-import team.speckfamily.teddy.werewolf.game.players.*;
 import team.speckfamily.teddy.werewolf.game.Vote;
+import team.speckfamily.teddy.werewolf.game.players.*;
+import team.speckfamily.teddy.werewolf.game.players.logic.LogicObject;
+import team.speckfamily.teddy.werewolf.game.players.logic.OracleLogic;
+import team.speckfamily.teddy.werewolf.game.players.logic.VilligerLogic;
+import team.speckfamily.teddy.werewolf.game.players.logic.WerewolfLogic;
 
 import java.util.*;
 
 public class Game {
     public static Map<Message, Game> runningGames = new HashMap<>();
-    private final List<PlayerObject> players = new ArrayList<>();
+    private final List<Player> players = new ArrayList<>();
+    private Player mayor;
+    private List<Player> diedPlayers = new ArrayList<>();
 
     public Game(List<User> users){
         int sehAnzahl = 1;
@@ -38,22 +44,35 @@ public class Game {
             embedBuilder.addField("Your role", String.format("You are a %s", player.getName()), false);
             privateChannel.sendMessage(embedBuilder.build()).queue();
         }));
-        Vote vote;
+
+        List<LogicObject> fractionList = new ArrayList<>();
+        fractionList.add(new WerewolfLogic());
+        fractionList.add(new OracleLogic());
+
+        fractionList.add(new VilligerLogic());          //Villiger are always the last one
+
+
+        //pregame
+        for (LogicObject logicObject : fractionList)
+            convertAction(logicObject.onFirstCall(this));
 
         while (getWinnerFraction() == null) {
+            //night
+            for (LogicObject logicObject : fractionList)
+                convertAction(logicObject.onAction(this));
 
-            vote = new Vote(Werewolf.class, players, "Bitte wähle aus, wer nun sterben soll.");
-            final PlayerObject lastDeadPlayer = vote.getVotedPlayer();
+            broadcast("The following players were killed that night: \n" + getDiedPlayers());
 
-            if (lastDeadPlayer != null) {
-                players.remove(lastDeadPlayer);
-                lastDeadPlayer.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(Embed.generate("Du bist ausgeschieden.").build()).queue());
-                players.forEach(player -> player.getUser()
-                        .openPrivateChannel().queue(privateChannel ->
-                                privateChannel.sendMessage(Embed.generate(
-                                        lastDeadPlayer.getUser().getName() + " ist ausgeschieden.").build()).queue()));
+            if(getWinnerFraction() != null)
+                break;
 
-            }else {}//todo pick random
+            //day
+            if(mayor == null || !players.contains(mayor))
+                mayor = voteMayor();
+
+            Player hangman = voteHangMan();
+            diedPlayers.add(hangman);
+            players.remove(hangman);
         }
 
         FractionName winnerFraction = getWinnerFraction();
@@ -64,12 +83,9 @@ public class Game {
 
     FractionName getWinnerFraction(){
         int werAnzahl = 0;
-        for(PlayerObject player : players)
+        for(Player player : players)
             if (player.getClass() == Werewolf.class)
                 werAnzahl++;
-        System.out.println(werAnzahl == 0);
-        System.out.println(werAnzahl == players.size());
-        System.out.println(Werewolf.of(null).getName());
 
         if(werAnzahl == 0)
             return new Villiger(null).getName();
@@ -78,7 +94,72 @@ public class Game {
         return null;
     }
 
-    public List<PlayerObject> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
+    }
+    public Player getRandomPlayer(){
+        return players.get((int)(Math.random() * players.size()));
+    }
+    public List<Player> getPlayersFromFraction(final Class<? extends Player> clazz){
+        List<Player> players = new ArrayList<>();
+
+        for (Player player : this.players)
+            if(player.getClass() == clazz)
+                players.add(player);
+
+        return players;
+    }
+
+    public void broadcast(String msg, Class<? extends Player> clazz){
+        players.forEach(player -> {
+            if(player.getClass() == clazz || Player.class == clazz)
+                player.getUser().openPrivateChannel().queue(privateChannel ->
+                        privateChannel.sendMessage(msg).queue());
+        });
+    }
+    public void broadcast(String msg){
+        broadcast(msg, Player.class);
+    }
+
+    private void convertAction(List<Action> actions){
+        if(actions == null)return;
+        actions.forEach(action -> {
+            if(action.getType() == null)return;
+
+            switch (action.getType()){
+                case kill:
+                    players.remove(action.getPlayer());
+                    diedPlayers.add(action.getPlayer());
+                    break;
+                case love:
+                    //todo amor
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private Player voteMayor(){
+        Vote vote = new Vote(Player.class, getPlayers(), "Who should be the mayor?", false);
+        return vote.getVotedPlayer();
+    }
+    private Player voteHangMan(){
+        Vote vote = new Vote(Player.class, getPlayers(), "Who is a werewolf and should be hanged?", false);
+        Player p = vote.getVotedPlayer();
+        broadcast("The player " + p.getUser().getName() + " was killed", Werewolf.class);
+        return p;
+
+    }
+
+    private String getDiedPlayers(){
+        StringBuilder builder = new StringBuilder();
+
+        diedPlayers.forEach(player -> builder.append(player.getUser().getName()).append(", "));
+        if(builder.length() == 0)return "nobody";
+
+        builder.replace(builder.length()-2, builder.length(), "");
+        diedPlayers = new ArrayList<>();
+        return builder.toString();
     }
 }
