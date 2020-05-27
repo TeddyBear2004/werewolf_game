@@ -10,10 +10,4 @@ public class Oracle extends Player {
     public Oracle(User user){
         super(user, FractionName.Oracle);
     }
-
-    @Override
-    public List<Action> onDie(Game game) {
-        return null;
-    }
-
 }

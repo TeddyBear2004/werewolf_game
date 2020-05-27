@@ -30,4 +30,9 @@ public class OracleLogic extends LogicObject {
     public List<Action> onFirstCall(Game game) {
         return null;
     }
+
+    @Override
+    public List<Action> onDie(Game game) {
+        return null;
+    }
 }

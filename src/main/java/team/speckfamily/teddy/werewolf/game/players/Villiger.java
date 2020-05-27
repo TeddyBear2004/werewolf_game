@@ -10,9 +10,4 @@ public class Villiger extends Player {
     public Villiger(User user){
         super(user, FractionName.Villiger);
     }
-
-    @Override
-    public List<Action> onDie(Game game) {
-        return null;
-    }
 }

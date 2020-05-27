@@ -10,9 +10,4 @@ public class Werewolf extends Player {
     public Werewolf(User user) {
         super(user, FractionName.Werewolf);
     }
-
-    @Override
-    public List<Action> onDie(Game game) {
-        return null;
-    }
 }
